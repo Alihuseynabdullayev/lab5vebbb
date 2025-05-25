@@ -1,145 +1,54 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CV - Əlihüseyn Abdullayev</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 40px;
-      color: #333;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1, h2, button {
-      color: #2c3e50;
-    }
-    .section {
-      margin-bottom: 20px;
-    }
-    button {
-      background-color: #2c3e50;
-      color: #fff;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 5px 5px 5px 0;
-    }
-    .editable {
-      margin-top: 10px;
-    }
-    textarea {
-      width: 100%;
-      height: 80px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-<div class="container">
-  <h1>Əlihüseyn Abdullayev</h1>
-  <p><strong>Email:</strong> <span id="email"></span> | <strong>Telefon:</strong> <span id="phone"></span></p>
-
-  <div class="section">
-    <h2>Haqqımda</h2>
-    <div id="about" class="editable"></div>
-    <button onclick="editSection('about')">Düzəliş et</button>
-    <button onclick="addToSection('about')">+ Əlavə et</button>
+  <div class="theme-toggle">
+    <button onclick="toggleTheme()">🌗 Rejim dəyiş</button>
   </div>
 
-  <div class="section">
-    <h2>Təhsil</h2>
-    <div id="education" class="editable"></div>
-    <button onclick="editSection('education')">Düzəliş et</button>
-    <button onclick="addToSection('education')">+ Əlavə et</button>
+  <div class="container">
+    <div class="profile">
+      <img id="profile-image" src="profil.jpg" alt="Profil Şəkli" />
+      <input type="file" id="image-upload" accept="image/*" />
+    </div>
+
+    <h1>Əlihüseyn Abdullayev</h1>
+    <p><strong>Email:</strong> <span id="email"></span> | <strong>Telefon:</strong> <span id="phone"></span></p>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAccordion('about')">Haqqımda</button>
+      <div class="section-content" id="about"></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAccordion('education')">Təhsil</button>
+      <div class="section-content" id="education"></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAccordion('experience')">İş Təcrübəsi</button>
+      <div class="section-content" id="experience"></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAccordion('skills')">Bacarıqlar</button>
+      <div class="section-content" id="skills"></div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAccordion('contact')">Əlaqə</button>
+      <div class="section-content" id="contact"></div>
+    </div>
+
+    <p id="last-saved"></p>
+    <button onclick="resetToDefault()">Sıfırla</button>
   </div>
 
-  <div class="section">
-    <h2>İş Təcrübəsi</h2>
-    <div id="experience" class="editable"></div>
-    <button onclick="editSection('experience')">Düzəliş et</button>
-    <button onclick="addToSection('experience')">+ Əlavə et</button>
-  </div>
-
-  <div class="section">
-    <h2>Bacarıqlar</h2>
-    <div id="skills" class="editable"></div>
-    <button onclick="editSection('skills')">Düzəliş et</button>
-    <button onclick="addToSection('skills')">+ Əlavə et</button>
-  </div>
-
-  <div class="section">
-    <h2>Əlaqə</h2>
-    <div id="contact" class="editable"></div>
-    <button onclick="editSection('contact')">Düzəliş et</button>
-    <button onclick="addToSection('contact')">+ Əlavə et</button>
-  </div>
-
-  <button onclick="resetToLastSaved()">Hamısını Sıfırla</button>
-</div>
-
-<script>
-const defaultData = {
-  email: "alihuseynabdullayev610@gmail.com",
-  phone: "+994 51 514 20 66",
-  about: "Mən Web HTML, CSS və JavaScript, Python, C++ sahəsində biliklərim var və daim inkişaf edirəm. Həm də kuryer kimi işləyirəm.",
-  education: "Azərbaycan Texniki Universiteti – İnformasiya Təhlükəsizliyi (2024 - 2029)",
-  experience: "Frontend Developer: Web saytların dizayn və inkişafı. HTML, CSS və JS istifadə edilərək layihələrin hazırlanması. Kuryer: Bolt, metro çatdırılmaları.",
-  skills: "HTML, CSS, JavaScript, Python, C++",
-  contact: "Bakı, Azərbaycan, Xətai rayonu. Instagram: alihuseyn.aa"
-};
-
-let data = JSON.parse(localStorage.getItem('cvData')) || {...defaultData};
-renderData();
-
-function renderData() {
-  for (let key in data) {
-    const el = document.getElementById(key);
-    if (el) el.innerText = data[key];
-  }
-}
-
-function editSection(key) {
-  const container = document.getElementById(key);
-  const current = data[key];
-  container.innerHTML = `<textarea id="edit-${key}">${current}</textarea>
-    <br><button onclick="saveEdit('${key}')">Yadda saxla</button>`;
-}
-
-function saveEdit(key) {
-  const newVal = document.getElementById(`edit-${key}`).value;
-  data[key] = newVal;
-  localStorage.setItem('cvData', JSON.stringify(data));
-  renderData();
-}
-
-function addToSection(key) {
-  const container = document.getElementById(key);
-  container.innerHTML = `<textarea id="add-${key}" placeholder="Yeni məlumatı daxil edin..."></textarea>
-    <br><button onclick="saveAddition('${key}')">Əlavə et və yadda saxla</button>`;
-}
-
-function saveAddition(key) {
-  const newVal = document.getElementById(`add-${key}`).value.trim();
-  if (newVal) {
-    data[key] += "\n" + newVal;
-    localStorage.setItem('cvData', JSON.stringify(data));
-    renderData();
-  }
-}
-
-function resetToLastSaved() {
-  data = JSON.parse(localStorage.getItem('cvData')) || {...defaultData};
-  renderData();
-}
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
